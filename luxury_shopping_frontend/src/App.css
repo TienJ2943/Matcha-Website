@@ -61,3 +61,39 @@
   transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
+.product-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+nav ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: inline;
+  margin-right: 1rem;
+}
+nav a {
+  text-decoration: none;
+  color: rgb(255, 191, 0);
+  font-weight: bold;
+  font-family: 'Garamond', serif;
+}
+nav a:hover {
+  color: red;
+}

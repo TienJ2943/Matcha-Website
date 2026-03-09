@@ -11,7 +11,7 @@ export default function ProductPage() {
     return (
         <div>
             <h1>{product.name}</h1>
-            <img src={product.imageUrl} alt={product.name} style={{maxWidth:300}} />
+            <img src={product.imageUrl} alt={product.name} style={{maxWidth:300, margin: "auto", display: "block",}} />
             <p>{product.price}</p>
             <p>{product.content}</p>
             <h2>Comments</h2>

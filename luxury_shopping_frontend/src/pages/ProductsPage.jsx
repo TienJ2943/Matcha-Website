@@ -8,7 +8,7 @@ export default function ProductsPage() {
             <div className="products-grid">
                 {products.map(p => (
                     <div className="product-card" key={p.id}>
-                        <img src={p.imageUrl} alt={p.name} style={{maxWidth:200}} />
+                        <img src={p.imageUrl} alt={p.name} style={{maxWidth:200, margin: "auto", display: "block",}} />
                         <h3>{p.name}</h3>
                         <p>{p.price}</p>
                         <Link to={`/products/${p.id}`}>View</Link>
