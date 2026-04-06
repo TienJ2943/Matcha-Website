@@ -22,6 +22,15 @@ export default function ProductsPage() {
             });
     }, []);
 
+    const handleAddToCart = (product) => {
+        addToCart(product);
+        alert(`${product.name} added to cart!`);
+    
+        setTimeout(() => {
+            setNotification("");
+        }, 2000);
+    };
+
     if (loading) return <p>Loading products...</p>;
     if (error) return <p>Error: {error}</p>;
 
@@ -31,11 +40,11 @@ export default function ProductsPage() {
             <div className="products-grid">
                 {products.map(p => (
                     <div className="product-card" key={p._id}>
-                        <img src={p.imageUrl} alt={p.name} style={{maxWidth:200, margin: "auto", display: "block",}} />
+                        <img src={p.imageUrl} alt={p.name} style={{maxWidth:200, margin: "auto", display: "block", borderRadius: '20px'}} />
                         <h3>{p.name}</h3>
                         
-                        <Link to={`/products/${p._id}`}>View</Link>
-                        <button onClick={() => addToCart(p)} style={{marginLeft: '10px'}}>Add to Cart</button>
+                        <Link to={`/products/${p._id}`} className="view-button">View</Link>
+                        <button onClick={() => handleAddToCart(p)} style={{marginLeft: '10px'}}>Add to Cart</button>
                     </div>
                 ))}
             </div>

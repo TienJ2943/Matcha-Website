@@ -53,6 +53,15 @@ export default function ProductPage() {
         setSubmitting(false);
     };
 
+    const handleAddToCart = (product) => {
+        addToCart(product);
+        alert(`${product.name} added to cart!`);
+    
+        setTimeout(() => {
+            setNotification("");
+        }, 2000);
+    };
+
     if (loading) return <p>Loading product...</p>;
     if (error) return <p>Error: {error}</p>;
     if (!product) return <p>Product not found.</p>;
@@ -60,10 +69,10 @@ export default function ProductPage() {
     return (
         <div>
             <h1>{product.name}</h1>
-            <img src={product.imageUrl} alt={product.name} style={{maxWidth: 300, margin: "auto", display: "block",}} />
+            <img src={product.imageUrl} alt={product.name} style={{maxWidth: 300, margin: "auto", display: "block", borderRadius: '20px'}} />
             <p>{product.price}</p>
             <p>{product.content}</p>
-            <button onClick={() => addToCart(product)}>Add to Cart</button>
+            <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
             <h2>Comments</h2>
             {product.comments.length === 0 ? (
                 <p>No comments yet.</p>
@@ -79,17 +88,19 @@ export default function ProductPage() {
                 <input
                     type="text"
                     placeholder="Your name"
+                    style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
                     value={commentForm.postedBy}
                     onChange={e => setCommentForm({...commentForm, postedBy: e.target.value})}
                     required
                 />
                 <textarea
                     placeholder="Your comment"
+                    style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
                     value={commentForm.text}
                     onChange={e => setCommentForm({...commentForm, text: e.target.value})}
                     required
                 />
-                <button type="submit" disabled={submitting}>
+                <button type="submit" disabled={submitting} style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}>
                     {submitting ? 'Submitting...' : 'Submit Comment'}
                 </button>
             </form>

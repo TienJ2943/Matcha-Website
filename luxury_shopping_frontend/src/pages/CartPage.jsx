@@ -83,6 +83,7 @@ export default function CartPage() {
                 <input
                     type="text"
                     placeholder="Your Name"
+                    style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
                     value={customerInfo.name}
                     onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
                     required
@@ -90,6 +91,7 @@ export default function CartPage() {
                 <input
                     type="email"
                     placeholder="Your Email"
+                    style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
                     value={customerInfo.email}
                     onChange={e => setCustomerInfo({...customerInfo, email: e.target.value})}
                     required
