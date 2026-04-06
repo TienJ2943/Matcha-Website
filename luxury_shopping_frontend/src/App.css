@@ -42,10 +42,12 @@
 }
 
 .products-grid {
-  display: grid;
+  display: list-item;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   margin-top: 2rem;
+  margin-bottom: 2rem;
+  list-style: none;
 }
 
 .product-card {
@@ -53,7 +55,7 @@
   padding: 1rem;
   border-radius: 8px;
   background-color: white;
-  text-align: center;
+  text-align: left;
   transition: transform 0.3s;
 }
 
@@ -73,27 +75,33 @@
 
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 1rem 0;
+  background-color: #ecc4c3;
 }
 
 nav ul{
   list-style-type: none;
   margin: 0;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
 }
 
 nav li {
-  display: inline;
-  margin-right: 1rem;
+  margin-right: 0;
 }
 nav a {
   text-decoration: none;
-  color: rgb(255, 191, 0);
+  color: white;
   font-weight: bold;
   font-family: 'Garamond', serif;
+  text-align: center;
+  
 }
 nav a:hover {
-  color: red;
+  color: #fc9fb1;
 }
+

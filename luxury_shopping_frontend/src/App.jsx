@@ -9,8 +9,10 @@ import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import ProductsPage from './pages/ProductsPage'
 import ProductPage from './pages/ProductPage'
+import CartPage from './pages/CartPage'
 import Layout from './Layout'
 import NotFoundPage from './pages/NotFoundPage'
+import { CartProvider } from './CartContext'
 
 const routes = [{
   path: "/",
@@ -32,6 +34,10 @@ const routes = [{
     {
       path: "/products/:id",
       element: <ProductPage />
+    },
+    {
+      path: "/cart",
+      element: <CartPage />
     }
   ]
 }];
@@ -43,9 +49,9 @@ const router = createBrowserRouter(routes);
 function App() {
   
   return (
-    <>
-    <RouterProvider router={router}/>
-    </>
+    <CartProvider>
+      <RouterProvider router={router}/>
+    </CartProvider>
   );
 }
 
