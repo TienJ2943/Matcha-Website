@@ -41,6 +41,19 @@ This Website is a full-stack e-commerce web application designed for users to br
 - Support for local images and custom fonts
 - Responsive card-based layout
 
+### Challenges Overcome
+
+One challenge in this project was linking the React frontend with the backend API and making sure product data loaded correctly through fetch requests. Another challenge was troubleshooting CSS issues, such as centering components, styling links as buttons, and making sure custom fonts and local image assets displayed properly. Routing between product pages and other sections of the website also required careful setup with React Router. Cart functionality involved managing shared state across components, which was addressed using React Context. Overall, the project helped strengthen both debugging skills and understanding of full-stack integration.
+
+### Future Improvements
+
+- Product search and filtering
+- Quantity selector in cart
+- Remove from cart functionality
+- Checkout page
+- User login and authentication
+- Deployment to an online hosting platform
+
 ## Folder Structure
 
 ```bash
@@ -58,14 +71,3 @@ Matcha-Website/
 │   └── package.json
 └── README.md
 
-Challenges Overcome
-
-One challenge in this project was linking the React frontend with the backend API and making sure product data loaded correctly through fetch requests. Another challenge was troubleshooting CSS issues, such as centering components, styling links as buttons, and making sure custom fonts and local image assets displayed properly. Routing between product pages and other sections of the website also required careful setup with React Router. Cart functionality involved managing shared state across components, which was addressed using React Context. Overall, the project helped strengthen both debugging skills and understanding of full-stack integration.
-
-Future Improvements
-Product search and filtering
-Quantity selector in cart
-Remove from cart functionality
-Checkout page
-User login and authentication
-Deployment to an online hosting platform
