@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { useCart } from '../CartContext';
+import { useAuth } from '../AuthContext';
 
 export default function CartPage() {
     const { cart, updateQuantity, removeFromCart, clearCart, getTotal } = useCart();
+    const { user, token } = useAuth();
     const [customerInfo, setCustomerInfo] = useState({ name: '', email: '' });
     const [checkoutLoading, setCheckoutLoading] = useState(false);
 
     const handleCheckout = async () => {
-        if (!customerInfo.name || !customerInfo.email) {
-            alert('Please enter your name and email');
+            if (!user || !token) {
+            alert('Please login to place an order.');
             return;
         }
         if (cart.length === 0) {
@@ -20,14 +22,12 @@ export default function CartPage() {
         try {
             const order = {
                 items: cart.map(item => ({ productId: item._id, quantity: item.quantity })),
-                total: getTotal(),
-                customerName: customerInfo.name,
-                customerEmail: customerInfo.email
+                total: getTotal()
             };
 
-            const res = await fetch('http://localhost:5500/api/orders', {
+            const res = await fetch('/api/orders', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                 body: JSON.stringify(order)
             });
 
@@ -80,23 +80,26 @@ export default function CartPage() {
             </div>
             <div style={{marginTop: '20px'}}>
                 <h2>Checkout</h2>
+                {!user && <p>Please <a href="/auth">login</a> to complete your order.</p>}
                 <input
                     type="text"
                     placeholder="Your Name"
                     style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
-                    value={customerInfo.name}
+                    value={user?.name || customerInfo.name}
                     onChange={e => setCustomerInfo({...customerInfo, name: e.target.value})}
+                    disabled={!!user}
                     required
                 />
                 <input
                     type="email"
                     placeholder="Your Email"
                     style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
-                    value={customerInfo.email}
+                    value={user?.email || customerInfo.email}
                     onChange={e => setCustomerInfo({...customerInfo, email: e.target.value})}
+                    disabled={!!user}
                     required
                 />
-                <button onClick={handleCheckout} disabled={checkoutLoading}>
+                <button onClick={handleCheckout} disabled={checkoutLoading || !user}>
                     {checkoutLoading ? 'Placing Order...' : 'Place Order'}
                 </button>
             </div>

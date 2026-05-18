@@ -10,9 +10,12 @@ import AboutPage from './pages/AboutPage'
 import ProductsPage from './pages/ProductsPage'
 import ProductPage from './pages/ProductPage'
 import CartPage from './pages/CartPage'
+import AdminPage from './pages/AdminPage'
+import AuthPage from './pages/AuthPage'
 import Layout from './Layout'
 import NotFoundPage from './pages/NotFoundPage'
 import { CartProvider } from './CartContext'
+import { AuthProvider } from './AuthContext'
 
 const routes = [{
   path: "/",
@@ -38,7 +41,9 @@ const routes = [{
     {
       path: "/cart",
       element: <CartPage />
-    }
+    },
+    { path: "/admin", element: <AdminPage /> },
+    { path: "/auth", element: <AuthPage /> }
   ]
 }];
 
@@ -49,9 +54,11 @@ const router = createBrowserRouter(routes);
 function App() {
   
   return (
-    <CartProvider>
-      <RouterProvider router={router}/>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router}/>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

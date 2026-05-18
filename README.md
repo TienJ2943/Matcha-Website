@@ -54,6 +54,65 @@ One challenge in this project was linking the React frontend with the backend AP
 - User login and authentication
 - Deployment to an online hosting platform
 
+## Running locally
+
+### Backend
+
+1. Open a terminal and change into the backend folder:
+   ```bash
+   cd backend
+   ```
+2. Install backend dependencies:
+   ```bash
+   npm install
+   ```
+3. Seed MongoDB from the included JSON files:
+   ```bash
+   npm run seed
+   ```
+4. Start the backend server:
+   ```bash
+   npm run dev
+   ```
+
+Default admin credentials:
+- Email: `admin@example.com`
+- Password: `adminpass`
+
+### Frontend
+
+1. Open a second terminal and change into the frontend folder:
+   ```bash
+   cd frontend
+   ```
+2. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the React development server:
+   ```bash
+   npm run dev
+   ```
+
+The frontend dev server proxies `/api` requests to the backend on port `5500`.
+
+### Available API routes
+
+- `POST /api/auth/login`
+- `POST /api/auth/signup`
+- `POST /api/auth/refresh`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- `GET /api/products`
+- `GET /api/products/id/:id`
+- `GET /api/orders` (admin only)
+- `POST /api/orders`
+- `GET /api/admin/users` (admin only)
+- `GET /api/admin/users/:id/orders` (admin only)
+- `POST /api/admin/products` (admin only)
+- `PUT /api/admin/products/:id` (admin only)
+- `DELETE /api/admin/products/:id` (admin only)
+
 ## Folder Structure
 
 ```bash

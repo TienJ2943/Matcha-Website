@@ -1,0 +1,7 @@
+.auth-page { padding: 16px; max-width: 420px; margin: 0 auto; }
+.auth-form, .auth-summary { display: flex; flex-direction: column; gap: 12px; }
+.auth-form label { display: flex; flex-direction: column; gap: 4px; }
+.auth-form input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+.auth-form button, .auth-summary button { padding: 10px 14px; border: none; border-radius: 6px; background: #2c7be5; color: #fff; cursor: pointer; }
+.auth-mode-toggle { background: #6c757d; }
+.auth-error { color: #c53030; font-weight: 600; }

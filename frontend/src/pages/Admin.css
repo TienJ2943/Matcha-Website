@@ -1,0 +1,17 @@
+.admin-page { padding: 16px; }
+.admin-login { max-width: 320px; display: flex; flex-direction: column; gap: 8px; }
+.admin-login input { padding: 6px; }
+.create-product { display:flex; gap:8px; margin:8px 0; }
+table { width:100%; border-collapse:collapse; margin-top:8px; }
+th, td { border:1px solid #ddd; padding:6px; }
+
+.products-controls { margin:8px 0; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.products-controls label { display:flex; gap:4px; align-items:center; }
+.products-controls input { width: 120px; padding: 4px 6px; }
+.products-controls button { padding: 6px 10px; }
+.sortable { cursor:pointer; user-select:none; }
+.active-sort { text-decoration: underline; }
+.pagination { margin-top:8px; display:flex; gap:8px; align-items:center; }
+.create-product input { width: 180px; }
+.product-count { margin: 10px 0 0; font-weight: 600; }
+.admin-page button { cursor:pointer; }
