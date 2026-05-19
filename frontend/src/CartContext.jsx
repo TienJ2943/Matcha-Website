@@ -1,63 +1,81 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { apiFetch } from './api';
+import { useAuth } from './AuthContext';
 
-const CartContext = createContext();
+const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-    const [cart, setCart] = useState([]);
+  const { user } = useAuth();
+  const [cart, setCart] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-    const addToCart = (product) => {
-        setCart(prevCart => {
-            const existing = prevCart.find(item => item._id === product._id);
-            if (existing) {
-                return prevCart.map(item =>
-                    item._id === product._id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
-            } else {
-                return [...prevCart, { ...product, quantity: 1 }];
-            }
-        });
-    };
+  async function refreshCart() {
+    if (!user) {
+      setCart([]);
+      setTotal(0);
+      return;
+    }
 
-    const updateQuantity = (id, quantity) => {
-        if (quantity <= 0) {
-            removeFromCart(id);
-            return;
-        }
-        setCart(prevCart =>
-            prevCart.map(item =>
-                item._id === id ? { ...item, quantity } : item
-            )
-        );
-    };
+    setLoading(true);
+    try {
+      const data = await apiFetch('/api/cart');
+      setCart(data.cart.items || []);
+      setTotal(data.total || 0);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    const removeFromCart = (id) => {
-        setCart(prevCart => prevCart.filter(item => item._id !== id));
-    };
+  useEffect(() => {
+    refreshCart();
+  }, [user?.id]);
 
-    const clearCart = () => {
-        setCart([]);
-    };
+  async function addToCart(product) {
+    if (!user) throw new Error('Please login before adding products to cart');
+    const data = await apiFetch('/api/cart/items', {
+      method: 'POST',
+      body: JSON.stringify({ productId: product._id, quantity: 1 }),
+    });
+    setCart(data.cart.items || []);
+    setTotal(data.total || 0);
+  }
 
-    const getTotal = () => {
-        return cart.reduce((total, item) => total + (parseFloat(item.price.replace(/[^\d.]/g, '')) * item.quantity), 0);
-    };
+  async function updateQuantity(productId, quantity) {
+    const data = await apiFetch(`/api/cart/items/${productId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ quantity }),
+    });
+    setCart(data.cart.items || []);
+    setTotal(data.total || 0);
+  }
 
-    return (
-        <CartContext.Provider value={{
-            cart,
-            addToCart,
-            updateQuantity,
-            removeFromCart,
-            clearCart,
-            getTotal
-        }}>
-            {children}
-        </CartContext.Provider>
-    );
+  async function removeFromCart(productId) {
+    const data = await apiFetch(`/api/cart/items/${productId}`, { method: 'DELETE' });
+    setCart(data.cart.items || []);
+    setTotal(data.total || 0);
+  }
+
+  async function clearCart() {
+    const data = await apiFetch('/api/cart', { method: 'DELETE' });
+    setCart(data.cart.items || []);
+    setTotal(data.total || 0);
+  }
+
+  async function checkout() {
+    const order = await apiFetch('/api/orders', { method: 'POST' });
+    setCart([]);
+    setTotal(0);
+    return order;
+  }
+
+  return (
+    <CartContext.Provider value={{ cart, total, loading, refreshCart, addToCart, updateQuantity, removeFromCart, clearCart, checkout }}>
+      {children}
+    </CartContext.Provider>
+  );
 }
 
 export function useCart() {
-    return useContext(CartContext);
+  return useContext(CartContext);
 }

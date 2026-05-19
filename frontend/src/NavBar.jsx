@@ -1,18 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
+import { useCart } from './CartContext';
 import './App.css';
 
 export default function NavBar() {
-    return (
-        <div className="site-header">
-            <h1 className="site-title">Neo got your Mac-cha</h1>
-            <nav className="navbar">
-                <ul>
-                    <li><Link to='/'>Home</Link></li>
-                    <li><Link to='/about'>About</Link></li>
-                <li><Link to='/products'>Products</Link></li>
-                <li><Link to='/cart'>Cart</Link></li>
-            </ul>
-        </nav>
-        </div>
-    );
+  const { user, logout } = useAuth();
+  const { cart } = useCart();
+  const navigate = useNavigate();
+  const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
+
+  function handleLogout() {
+    logout();
+    navigate('/');
+  }
+
+  return (
+    <header className="navbar">
+      <Link to="/" className="brand">Neo got your Mac-cha</Link>
+      <nav className="nav-links">
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/products">Products</NavLink>
+        <NavLink to="/cart">Cart ({cartCount})</NavLink>
+        {user?.role === 'admin' && <NavLink to="/admin/carts">Admin Carts</NavLink>}
+        {user?.role === 'admin' && <NavLink to="/admin/products">Admin Products</NavLink>}
+        {user ? (
+          <>
+            <NavLink to="/profile">{user.name}</NavLink>
+            <button className="link-button" onClick={handleLogout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <NavLink to="/login">Login</NavLink>
+            <NavLink to="/register">Register</NavLink>
+          </>
+        )}
+      </nav>
+    </header>
+  );
 }

@@ -1,109 +1,123 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useCart } from "../CartContext";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { apiFetch, resolveAssetUrl } from '../api';
+import { useAuth } from '../AuthContext';
+import { useCart } from '../CartContext';
 
 export default function ProductPage() {
-    const { id } = useParams();
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [commentForm, setCommentForm] = useState({ postedBy: '', text: '' });
-    const [submitting, setSubmitting] = useState(false);
-    const { addToCart } = useCart();
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { addToCart } = useCart();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [commentForm, setCommentForm] = useState({ postedBy: '', text: '' });
+  const [submitting, setSubmitting] = useState(false);
 
-    useEffect(() => {
-        fetch(`http://localhost:5500/api/products/id/${id}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    setError(data.error);
-                } else {
-                    setProduct(data);
-                }
-                setLoading(false);
-            })
-            .catch(err => {
-                setError(err.message);
-                setLoading(false);
-            });
-    }, [id]);
+  async function loadProduct() {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await apiFetch(`/api/products/${id}`);
+      setProduct(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    const handleCommentSubmit = async (e) => {
-        e.preventDefault();
-        setSubmitting(true);
-        try {
-            const res = await fetch(`http://localhost:5500/api/products/${encodeURIComponent(product.name)}/comments`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(commentForm)
-            });
-            const data = await res.json();
-            if (res.ok) {
-                // Refresh product data
-                const updatedRes = await fetch(`http://localhost:5500/api/products/id/${id}`);
-                const updatedProduct = await updatedRes.json();
-                setProduct(updatedProduct);
-                setCommentForm({ postedBy: '', text: '' });
-            } else {
-                alert('Error: ' + data.error);
-            }
-        } catch (err) {
-            alert('Error: ' + err.message);
-        }
-        setSubmitting(false);
-    };
+  useEffect(() => {
+    loadProduct();
+  }, [id]);
 
-    const handleAddToCart = (product) => {
-        addToCart(product);
-        alert(`${product.name} added to cart!`);
-    
-        setTimeout(() => {
-            setNotification("");
-        }, 2000);
-    };
+  async function handleAddToCart() {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
 
-    if (loading) return <p>Loading product...</p>;
-    if (error) return <p>Error: {error}</p>;
-    if (!product) return <p>Product not found.</p>;
+    try {
+      await addToCart(product);
+      setNotice(`${product.name} added to cart.`);
+      setTimeout(() => setNotice(''), 1800);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
 
-    return (
+  async function handleCommentSubmit(event) {
+    event.preventDefault();
+    setSubmitting(true);
+    setError('');
+
+    try {
+      await apiFetch(`/api/products/${id}/comments`, {
+        method: 'POST',
+        body: JSON.stringify(commentForm),
+      });
+      setCommentForm({ postedBy: '', text: '' });
+      await loadProduct();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (loading) return <p>Loading product...</p>;
+  if (error && !product) return <p className="error-message">Error: {error}</p>;
+  if (!product) return <p>Product not found.</p>;
+
+  return (
+    <section className="detail-layout">
+      <div className="detail-card">
+        {product.imageUrl && <img src={resolveAssetUrl(product.imageUrl)} alt={product.name} />}
         <div>
-            <h1>{product.name}</h1>
-            <img src={product.imageUrl} alt={product.name} style={{maxWidth: 300, margin: "auto", display: "block", borderRadius: '20px'}} />
-            <p>{product.price}</p>
-            <p>{product.content}</p>
-            <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
-            <h2>Comments</h2>
-            {product.comments.length === 0 ? (
-                <p>No comments yet.</p>
-            ) : (
-                <ul>
-                    {product.comments.map((comment, index) => (
-                        <li key={index}><strong>{comment.postedBy}:</strong> {comment.text}</li>
-                    ))}
-                </ul>
-            )}
-            <h3>Add a Comment</h3>
-            <form onSubmit={handleCommentSubmit}>
-                <input
-                    type="text"
-                    placeholder="Your name"
-                    style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
-                    value={commentForm.postedBy}
-                    onChange={e => setCommentForm({...commentForm, postedBy: e.target.value})}
-                    required
-                />
-                <textarea
-                    placeholder="Your comment"
-                    style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}
-                    value={commentForm.text}
-                    onChange={e => setCommentForm({...commentForm, text: e.target.value})}
-                    required
-                />
-                <button type="submit" disabled={submitting} style={{display: 'block', width: '100%', marginTop: '10px', borderRadius: '20px', padding: '10px'}}>
-                    {submitting ? 'Submitting...' : 'Submit Comment'}
-                </button>
-            </form>
+          <h1>{product.name}</h1>
+          <p className="price">{product.price}</p>
+          <p>{product.content}</p>
+          <button className="button" onClick={handleAddToCart}>Add to Cart</button>
+          {notice && <p className="success-message">{notice}</p>}
+          {error && <p className="error-message">Error: {error}</p>}
         </div>
-    );
+      </div>
+
+      <div className="panel">
+        <h2>Comments</h2>
+        {product.comments?.length === 0 ? (
+          <p>No comments yet.</p>
+        ) : (
+          <ul className="comment-list">
+            {product.comments.map((comment, index) => (
+              <li key={comment._id || index}>
+                <strong>{comment.postedBy}:</strong> {comment.text}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <form className="form" onSubmit={handleCommentSubmit}>
+          <h3>Add a Comment</h3>
+          <input
+            value={commentForm.postedBy}
+            onChange={(event) => setCommentForm({ ...commentForm, postedBy: event.target.value })}
+            placeholder="Your name"
+            required
+          />
+          <textarea
+            value={commentForm.text}
+            onChange={(event) => setCommentForm({ ...commentForm, text: event.target.value })}
+            placeholder="Your comment"
+            required
+          />
+          <button className="button" type="submit" disabled={submitting}>
+            {submitting ? 'Submitting...' : 'Submit Comment'}
+          </button>
+        </form>
+      </div>
+    </section>
+  );
 }
